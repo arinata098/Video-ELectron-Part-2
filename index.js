@@ -1,11 +1,13 @@
 const electron = require("electron");
-
+const uuid = require('uuid-js');
 const {app, BrowserWindow, Menu, ipcMain} = electron;
 
 let todayWindow;
 let createWindow;
 let listWindow;
 let aboutWindow;
+
+let allAppointments = [];
 
 app.on("ready", ()=> {
     todayWindow = new BrowserWindow({
@@ -73,11 +75,16 @@ const aboutWindowCreator = () => {
 };
 
 ipcMain.on("appointment:create", (event, appointment) => {
-    console.log(appointment);
+    appointment.id = uuid.create().toString();
+
+	allAppointments.push(appointment);
+	console.log('(index.js) Current Appointments: ',allAppointments);
+
+	createWindow.close();
 });
 
 ipcMain.on("appointment:request:list", event=> {
-    console.log("here");
+    listWindow.webContents.send('appointment:response:list', allAppointments);
 });
 
 ipcMain.on("appointment:request:today", event=> {

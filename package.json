@@ -9,6 +9,8 @@
   "author": "bagus_arinata",
   "license": "ISC",
   "dependencies": {
-    "electron": "^8.0.2"
+    "electron": "^8.2.0",
+    "save": "^2.4.0",
+    "uuid-js": "^0.7.5"
   }
 }
