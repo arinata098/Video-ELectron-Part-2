@@ -7,7 +7,7 @@ let createWindow;
 let listWindow;
 let aboutWindow;
 
-let allAppointments = [];
+let allAppointment = [];
 
 app.on("ready", ()=> {
     todayWindow = new BrowserWindow({
@@ -77,23 +77,47 @@ const aboutWindowCreator = () => {
 ipcMain.on("appointment:create", (event, appointment) => {
     appointment.id = uuid.create().toString();
 
-	allAppointments.push(appointment);
-	console.log('(index.js) Current Appointments: ',allAppointments);
-
+	allAppointment.push(appointment);
+	console.log('(index.js) Current Appointment: ',allAppointment);
+    sendTodayAppointments();
 	createWindow.close();
 });
 
 ipcMain.on("appointment:request:list", event=> {
-    listWindow.webContents.send('appointment:response:list', allAppointments);
+    listWindow.webContents.send('appointment:response:list', allAppointment);
 });
 
 ipcMain.on("appointment:request:today", event=> {
+    sendTodayAppointments();
     console.log("here2");
 });
 
 ipcMain.on("appointment:done", (event, id) => {
     console.log("here3");
 });
+
+const DateNow = () => {
+	var d = new Date(),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) 
+        month = '0' + month;
+    if (day.length < 2) 
+        day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+const sendTodayAppointments = () => {
+    const today = DateNow();
+    const filtered = allAppointment.filter(
+		appointment => appointment.date === today
+	);
+
+	todayWindow.webContents.send('appointment:response:today', filtered);
+};
 
 const menuTemplate = [{
         label: "File",
