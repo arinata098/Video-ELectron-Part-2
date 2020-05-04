@@ -16,6 +16,7 @@
 
 		ipcRenderer.on('appointment:response:today', (event, appointments) => {
 			const listDiv = document.getElementById('list');
+			listDiv.innerHTML = "";
 
 			//delete childs
 			while(listDiv.firstChild){
